@@ -1,63 +1,51 @@
-import express from "express";
-import axios from "axios";
+import { Search, Link as LinkIcon, Save, PlayCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 
-const app = express();
-app.use(express.json());
+const steps = [
+  {
+    icon: <Search className="w-5 h-5" />,
+    title: "Tìm Video",
+    desc: "Duyệt TikTok và chọn video bạn muốn giữ lại."
+  },
+  {
+    icon: <LinkIcon className="w-5 h-5" />,
+    title: "Sao chép Link",
+    desc: "Nhấn Chia sẻ và chọn 'Sao chép liên kết'."
+  },
+  {
+    icon: <Save className="w-5 h-5" />,
+    title: "Dán & Lưu",
+    desc: "Dán liên kết vào Vault và nhấn nút 'Lưu Video'."
+  },
+  {
+    icon: <PlayCircle className="w-5 h-5" />,
+    title: "Thưởng thức",
+    desc: "Xem lại bộ sưu tập của bạn mọi lúc, mọi nơi."
+  }
+];
 
-// API chính
-app.post("/api/tiksave", async (req, res) => {
-    try {
-        const { url } = req.body;
-
-        if (!url) {
-            return res.status(400).json({ error: "Missing TikTok URL" });
-        }
-
-        // Bước 1: Gửi request lấy HTML TikTok
-        const response = await axios.get(url, {
-            headers: {
-                "User-Agent": "Mozilla/5.0"
-            }
-        });
-
-        const html = response.data;
-
-        // Bước 2: Extract video URL (no watermark)
-        const videoUrl = extractVideoUrl(html);
-
-        if (!videoUrl) {
-            return res.status(500).json({ error: "Cannot extract video" });
-        }
-
-        // Bước 3: Trả kết quả
-        res.json({
-            success: true,
-            download: videoUrl
-        });
-
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Hàm extract video
-function extractVideoUrl(html) {
-    try {
-        const regex = /"playAddr":"(.*?)"/;
-        const match = html.match(regex);
-
-        if (match && match[1]) {
-            return match[1]
-                .replace(/\\u0026/g, "&")
-                .replace(/\\/g, "");
-        }
-
-        return null;
-    } catch (err) {
-        return null;
-    }
+export function WorkflowSteps() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-12 text-left">
+      {steps.map((step, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+          className="p-4 rounded-2xl bg-secondary/30 border border-border flex items-start gap-4"
+        >
+          <div className="p-2 bg-primary/20 rounded-xl text-primary shrink-0">
+            {step.icon}
+          </div>
+          <div>
+            <h4 className="font-bold text-sm mb-1">{step.title}</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {step.desc}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
 }
-
-app.listen(3000, () => {
-    console.log("TikSave API running on port 3000");
-});
