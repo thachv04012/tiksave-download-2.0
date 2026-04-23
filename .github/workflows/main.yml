@@ -1,48 +1,68 @@
-import { Search, Link as LinkIcon, Save, PlayCircle } from 'lucide-react';
+import { Search, Link as LinkIcon, Save, PlayCircle, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
 const steps = [
   {
+    number: "01",
     icon: <Search className="w-5 h-5" />,
-    title: "Tìm Video",
-    desc: "Duyệt TikTok và chọn video bạn muốn giữ lại."
+    title: "Khám phá",
+    desc: "Tìm kiếm những nội dung TikTok sáng tạo và ý nghĩa nhất mà bạn muốn lưu giữ vĩnh viễn."
   },
   {
+    number: "02",
     icon: <LinkIcon className="w-5 h-5" />,
-    title: "Sao chép Link",
-    desc: "Nhấn Chia sẻ và chọn 'Sao chép liên kết'."
+    title: "Sao chép",
+    desc: "Chỉ cần nhấn vào nút chia sẻ trên TikTok và sao chép liên kết video của bạn một cách nhanh chóng."
   },
   {
+    number: "03",
     icon: <Save className="w-5 h-5" />,
-    title: "Dán & Lưu",
-    desc: "Dán liên kết vào Vault và nhấn nút 'Lưu Video'."
+    title: "Lưu trữ",
+    desc: "Dán liên kết vào hệ thống TikSave. Công nghệ của chúng tôi sẽ tự động phân tích và lưu trữ vào kho của bạn."
   },
   {
+    number: "04",
     icon: <PlayCircle className="w-5 h-5" />,
-    title: "Thưởng thức",
-    desc: "Xem lại bộ sưu tập của bạn mọi lúc, mọi nơi."
+    title: "Trải nghiệm",
+    desc: "Xem lại video mượt mà với trình phát tích hợp chính thức, không làm giảm chất lượng nội dung."
   }
 ];
 
 export function WorkflowSteps() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-12 text-left">
+    <div className="w-full mt-16 text-left space-y-6">
       {steps.map((step, index) => (
         <motion.div
           key={index}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-          className="p-4 rounded-2xl bg-secondary/30 border border-border flex items-start gap-4"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: index * 0.15 }}
+          className="group relative flex items-start gap-6 p-6 rounded-[2rem] bg-gradient-to-br from-secondary/40 to-transparent border border-border/50 hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5"
         >
-          <div className="p-2 bg-primary/20 rounded-xl text-primary shrink-0">
-            {step.icon}
+          <div className="relative">
+            <div className="absolute -inset-2 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+            <div className="relative p-3 bg-card border border-border rounded-2xl text-primary shadow-inner">
+              {step.icon}
+            </div>
           </div>
-          <div>
-            <h4 className="font-bold text-sm mb-1">{step.title}</h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-[10px] font-black tracking-[0.2em] text-primary/50 uppercase italic">
+                Step {step.number}
+              </span>
+              <div className="h-px w-8 bg-primary/20" />
+              <h4 className="font-bold text-base tracking-tight group-hover:text-primary transition-colors">
+                {step.title}
+              </h4>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
               {step.desc}
             </p>
+          </div>
+
+          <div className="self-center opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+            <ChevronRight className="w-5 h-5 text-primary/40" />
           </div>
         </motion.div>
       ))}
