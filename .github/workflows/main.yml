@@ -1,1 +1,63 @@
+import express from "express";
+import axios from "axios";
 
+const app = express();
+app.use(express.json());
+
+// API chính
+app.post("/api/tiksave", async (req, res) => {
+    try {
+        const { url } = req.body;
+
+        if (!url) {
+            return res.status(400).json({ error: "Missing TikTok URL" });
+        }
+
+        // Bước 1: Gửi request lấy HTML TikTok
+        const response = await axios.get(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0"
+            }
+        });
+
+        const html = response.data;
+
+        // Bước 2: Extract video URL (no watermark)
+        const videoUrl = extractVideoUrl(html);
+
+        if (!videoUrl) {
+            return res.status(500).json({ error: "Cannot extract video" });
+        }
+
+        // Bước 3: Trả kết quả
+        res.json({
+            success: true,
+            download: videoUrl
+        });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Hàm extract video
+function extractVideoUrl(html) {
+    try {
+        const regex = /"playAddr":"(.*?)"/;
+        const match = html.match(regex);
+
+        if (match && match[1]) {
+            return match[1]
+                .replace(/\\u0026/g, "&")
+                .replace(/\\/g, "");
+        }
+
+        return null;
+    } catch (err) {
+        return null;
+    }
+}
+
+app.listen(3000, () => {
+    console.log("TikSave API running on port 3000");
+});
